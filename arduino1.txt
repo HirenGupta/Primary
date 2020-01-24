@@ -1,0 +1,47 @@
+#include <Servo.h>
+Servo myservo;  			// create servo object to control a servo
+String rxString = "";
+int flowValue = 0;
+int x;
+String flowValueString = "0";
+String concValueString = "0";
+String strArr[2];  		//Set the size of the array to equal the number of values you will be receiveing.
+void setup() 
+{
+  myservo.attach(9);  			// attaches the servo on pin 9 to the servo object
+  Serial.begin(9600); 			// opens serial port, sets data rate to 9600 bps
+}
+void loop() 
+{
+if (Serial.available() > 0)		// send data only when you receive data:
+   {
+    flowValueString = "";	        //Keep looping until there is something in the buffer.
+    while (Serial.available()) 
+     {
+      delay(15);			//Delay to allow byte to arrive in input buffer.            
+      char ch = Serial.read();		//Read a single character from the buffer.
+      rxString += ch;			//Append that single character to a string.
+     }
+    					// say what you got:
+    Serial.print("I received: ");
+     int stringStart = 0;
+     int arrayIndex = 0;
+     for (int i = 0; i  < rxString.length(); i++) 
+    {
+     if (rxString.charAt(i) == ',')	//Get character and check if it's our "special" character.
+        {
+         strArr[arrayIndex] = "";	//Clear previous values from array.
+         strArr[arrayIndex] = rxString.substring(stringStart, i);	//Save substring into array.
+         stringStart = (i + 1);		//Set new string starting point.
+         arrayIndex++;
+         }
+        }
+	flowValueString = strArr[0];	//Put values from the array into the variables.
+        concValueString = strArr[1];
+        flowValue = flowValueString.toInt();	//Convert string to int
+  for (int pos = 0; pos <=x; pos += 1) 
+  { 					// goes from 0 degrees to x degrees
+    					// in steps of 1 degree
+    myservo.write(pos);              	// tell servo to go to position in variable 'pos'
+    delay(15);                       	// waits 15ms for the servo to reach the position
+  }
