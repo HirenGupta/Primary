@@ -1,0 +1,70 @@
+#include <Servo.h>
+
+Servo myservo;  			// create servo object to control a servo
+int incomingByte = 0; 			// for incoming serial data
+//Variables.
+String rxString = "";
+int cpuValue = 0;
+String flowValueString = "0";
+String amntValueString = "0";
+String strArr[2];  		//Set the size of the array to equal the number of values you will be receiveing.
+void setup() 
+{
+  myservo.attach(9);  			// attaches the servo on pin 9 to the servo object
+  Serial.begin(9600); 			// opens serial port, sets data rate to 9600 bps
+}
+
+void loop() 
+{
+if (Serial.available() > 0)		// send data only when you receive data:
+   {
+    incomingByte = Serial.read();	//read the incoming byte:
+    flowValueString = "";	        //Keep looping until there is something in the buffer.
+    while (Serial.available()) 
+     {
+      delay(15);			//Delay to allow byte to arrive in input buffer.            
+      char ch = Serial.read();		//Read a single character from the buffer.
+      rxString += ch;			//Append that single character to a string.
+     }
+    					// say what you got:
+    Serial.print("I received: ");
+     int stringStart = 0;
+     int arrayIndex = 0;
+     for (int i = 0; i  < rxString.length(); i++) 
+    {
+     if (rxString.charAt(i) == ',')	//Get character and check if it's our "special" character.
+        {
+         strArr[arrayIndex] = "";	//Clear previous values from array.
+         strArr[arrayIndex] = rxString.substring(stringStart, i);	//Save substring into array.
+         stringStart = (i + 1);		//Set new string starting point.
+         arrayIndex++;
+         }
+        }
+	cpuValueString = strArr[0];	//Put values from the array into the variables.
+        memValueString = strArr[1];
+        cpuValue = cpuValueString.toInt();	//Convert string to int.
+        	
+
+
+
+
+
+
+string[] values = receivedString.Split(','); 
+string value1 = values[0]; 
+string value2 = values[1]; 
+
+    Serial.println(incomingByte, DEC);
+  } 
+  for (int pos = 0; pos <= 180; pos += 1) 
+  { 					// goes from 0 degrees to 180 degrees
+    					// in steps of 1 degree
+    myservo.write(pos);              	// tell servo to go to position in variable 'pos'
+    delay(15);                       	// waits 15ms for the servo to reach the position
+  }
+  for (int pos = 180; pos >= 0; pos -= 1) 
+  { 					// goes from 180 degrees to 0 degrees
+    myservo.write(pos);              	// tell servo to go to position in variable 'pos'
+    delay(15);                       	// waits 15ms for the servo to reach the position
+  }
+}
